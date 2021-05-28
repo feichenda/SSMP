@@ -4,12 +4,13 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
+
+    <context:property-placeholder location="classpath:databasesource.properties"/>
     <bean id="datasource" class="org.apache.commons.dbcp2.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="url"
-                  value="jdbc:mysql://127.0.0.1:3306/mydb?useSSL=true&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8"/>
-        <property name="username" value="root"/>
-        <property name="password" value="123456"/>
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
         <property name="maxTotal" value="30"/>
         <property name="maxIdle" value="10"/>
         <property name="initialSize" value="5"/>
@@ -21,30 +22,31 @@
 
     <tx:annotation-driven transaction-manager="txManager"/>
 
-    <bean id="countSqlParser" class="com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize">
+    <bean id="countSqlParser"
+          class="com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize">
         <!-- 设置为 true 可以优化部分 left join 的sql -->
         <property name="optimizeJoin" value="true"/>
     </bean>
 
     <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="datasource"/>
-        <property name="configLocation" value="classpath:mybatis-config.xml"/>
         <property name="mapperLocations" value="classpath:mapper/*.xml"/>
         <property name="globalConfig" ref="globalConfig"/> <!--  非必须  -->
-        <property name="plugins">
+        <property name="configuration" ref="configuration"/> <!--  非必须  -->
+        <property name="plugins"> <!--  开启分页插件  -->
             <array>
                 <bean class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor">
-<!--                    <property name="sqlParser" ref="自定义解析类、可以没有"/>-->
-<!--                    <property name="dialectClazz" value="自定义方言类、可以没有"/>-->
-<!--                    &lt;!&ndash; COUNT SQL 解析.可以没有 &ndash;&gt;-->
+                    <!--                    <property name="sqlParser" ref="自定义解析类、可以没有"/>-->
+                    <!--                    <property name="dialectClazz" value="自定义方言类、可以没有"/>-->
+                    <!--                    &lt;!&ndash; COUNT SQL 解析.可以没有 &ndash;&gt;-->
                     <property name="countSqlParser" ref="countSqlParser"/>
                 </bean>
             </array>
         </property>
-
     </bean>
 
     <bean id="configuration" class="com.baomidou.mybatisplus.core.MybatisConfiguration">
+        <property name="mapUnderscoreToCamelCase" value="false" /><!-- 关闭Mybatis-plus驼峰命名-->
     </bean>
 
     <bean id="globalConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig">
@@ -52,6 +54,8 @@
     </bean>
 
     <bean id="dbConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
+        <property name="idType" value="AUTO" /><!-- 指定主键自动增长类型 -->
+        <property name="tableUnderline" value="false"/><!-- 关闭Mybatis-plus驼峰命名-->
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

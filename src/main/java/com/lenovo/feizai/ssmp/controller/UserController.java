@@ -4,13 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lenovo.feizai.ssmp.entity.User;
 import com.lenovo.feizai.ssmp.service.UserServiceDao;
+import com.lenovo.feizai.ssmp.util.BaseModel;
 import com.lenovo.feizai.ssmp.util.GsonUtil;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,6 +17,7 @@ import java.util.List;
  * @date 2021/5/28 0028 下午 6:20:21
  * @annotation
  */
+@CrossOrigin
 @RestController
 public class UserController {
     @Autowired
@@ -34,7 +33,7 @@ public class UserController {
 
     @GetMapping("/getUserByName")
     public String getUserByName(@Param("name") String name) {
-        User user = userServiceDao.getOne(new QueryWrapper<User>().eq("name", name));
+        User user = userServiceDao.getOne(new QueryWrapper<User>().eq("username", name));
         if (user != null) {
             return GsonUtil.GsonString(user);
         } else {
@@ -44,7 +43,7 @@ public class UserController {
 
     @GetMapping("/getUserByKey")
     public String getUserByKey(@Param("key") String key) {
-        User user = userServiceDao.getOne(new QueryWrapper<User>().like("name", key));
+        User user = userServiceDao.getOne(new QueryWrapper<User>().like("username", key));
         if (user != null) {
             return GsonUtil.GsonString(user);
         } else {
@@ -52,13 +51,44 @@ public class UserController {
         }
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", user.getUsername())
+                .eq("password",user.getPassword());
+        User selectuser = userServiceDao.getOne(wrapper);
+        BaseModel<User> model = new BaseModel<>();
+        if (selectuser != null) {
+            model.setCode(200);
+            model.setMessage("登录成功");
+            model.setData(selectuser);
+        } else {
+            model.setCode(201);
+            model.setMessage("登录失败");
+        }
+        return GsonUtil.GsonString(model);
+    }
+
     @PostMapping("/saveUser")
     public String saveUser(@RequestBody User user) {
-        boolean save = userServiceDao.save(user);
-        if (save) {
-            return GsonUtil.GsonString(user);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", user.getUsername());
+        User selectuser = userServiceDao.getOne(wrapper);
+        BaseModel<User> model = new BaseModel<>();
+        if (selectuser == null) {
+            boolean save = userServiceDao.save(user);
+            if (save) {
+                model.setCode(200);
+                model.setMessage("注册成功");
+                model.setData(user);
+            } else {
+                model.setCode(201);
+                model.setMessage("注册失败");
+            }
         } else {
-            return GsonUtil.GsonString("null");
+            model.setCode(202);
+            model.setMessage("该用户已存在");
         }
+        return GsonUtil.GsonString(model);
     }
 }

@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 @TableName("user")
 public class User {
     Integer id;
-    String name;
+    String username;
     String password;
 }
