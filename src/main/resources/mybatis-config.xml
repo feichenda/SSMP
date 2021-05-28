@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<!--    <typeAliases>-->
+<!--        &lt;!&ndash;        这是单个的别名&ndash;&gt;-->
+<!--        &lt;!&ndash;        <typeAlias type="com.xinke.SsmExample.Entity.User" alias="user"></typeAlias>&ndash;&gt;-->
+
+<!--        &lt;!&ndash;        多个时可以直配置用包&ndash;&gt;-->
+<!--        <package name="com.lenovo.feizai.entity"/>-->
+<!--    </typeAliases>-->
+
+
+    <!--    <mappers>-->
+    <!--        <mapper resource="com/xinke/SsmExample/Mapping/UserMapping.xml"/>-->
+    <!--    </mappers>-->
+<!--    <settings>-->
+<!--        &lt;!&ndash; 使⽤jdbc的getGeneratedKeys获取数据库⾃增主键值 &ndash;&gt;-->
+<!--        <setting name="useGeneratedKeys" value="true" />-->
+<!--        &lt;!&ndash; 使⽤列别名替换列名 默认:true &ndash;&gt;-->
+<!--        <setting name="useColumnLabel" value="true" />-->
+<!--        <setting name="cacheEnabled" value="true"/>-->
+<!--        <setting name="mapUnderscoreToCamelCase" value="true"/>-->
+<!--    </settings>-->
+
+</configuration>
